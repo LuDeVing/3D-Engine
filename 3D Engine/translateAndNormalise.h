@@ -1,3 +1,12 @@
+#ifndef TRANSLATEANDNORMALISE_CLASS_H
+#define TRANSLATEANDNORMALISE_CLASS_H
+
+
+#define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
+#define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
+#define _SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING 
+#define _SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING 
+
 #include <Windows.h>
 #include <GL\glew.h>
 #include <GL\freeglut.h>
@@ -12,7 +21,9 @@
 #include "Camera.h"
 
 class object {
+
 private:
+
 	mesh cubeproj, ogm;
 	vector <triangle> sorted;
 
@@ -24,10 +35,9 @@ private:
 		veccout(tri.p[2]);
 	}
 
-	void normalise(mesh& m, mesh& cubeproj, mat& proj, point& vfor, mat& matview) {
-		for (unsigned int k = 0; k < m.triangles.size(); k++) {
+	void normalise(mesh& m, mesh& cubeproj, mat& proj, point cam, mat& matview) {
 
-			matMultsv(matview, m.triangles[k]);
+		for (unsigned int k = 0; k < m.triangles.size(); k++) {
 
 			point normal, l1, l2;
 
@@ -36,11 +46,13 @@ private:
 			normal = vecCross(l1, l2);
 			normal = vecNorm(normal);
 
-			point ray = vecSub(m.triangles[k].p[0], vfor);
+			point ray = vecSub(m.triangles[k].p[0], cam);
 
 			m.triangles[k].normal = normal;
 
 			if (vecDot(normal, ray) < 0.0f) {
+
+				matMultsv(matview, m.triangles[k]);
 
 				m.triangles[k].visible = true;
 
@@ -70,7 +82,7 @@ private:
 
 					for (int i = 0; i < 3; i++) {
 
-						GLfloat td = cubeproj.triangles[w].p[i].x * proj.m[0][3] + cubeproj.triangles[w].p[i].y * proj.m[1][3] + 
+						GLfloat td = cubeproj.triangles[w].p[i].x * proj.m[0][3] + cubeproj.triangles[w].p[i].y * proj.m[1][3] +
 							cubeproj.triangles[w].p[i].z * proj.m[2][3] + proj.m[3][3];
 
 						cubeproj.triangles[w].t[i].u /= td;
@@ -84,7 +96,7 @@ private:
 						cubeproj.triangles[w].p[i].z = cubeproj.triangles[w].p[i].z * proj.m[2][2] + proj.m[2][3];
 					}
 
-					triangle push = {   cubeproj.triangles[w].p[0].x, cubeproj.triangles[w].p[0].y, cubeproj.triangles[w].p[0].z,
+					triangle push = { cubeproj.triangles[w].p[0].x, cubeproj.triangles[w].p[0].y, cubeproj.triangles[w].p[0].z,
 										cubeproj.triangles[w].p[1].x, cubeproj.triangles[w].p[1].y, cubeproj.triangles[w].p[1].z,
 										cubeproj.triangles[w].p[2].x, cubeproj.triangles[w].p[2].y, cubeproj.triangles[w].p[2].z,
 										cubeproj.triangles[w].t[0].u, cubeproj.triangles[w].t[0].v, cubeproj.triangles[w].t[0].w,
@@ -96,7 +108,9 @@ private:
 
 				}
 			}
+
 		}
+
 	}
 
 	void matMult(mesh& m, mat& mt) {
@@ -185,8 +199,9 @@ private:
 
 
 public:
-	pair <mesh, vector <triangle> > mn(int framenum, mesh& msh, GLfloat ScreenWidth, GLfloat ScreenHeight,
-		point& cameradel, point& lookdir, point& vup, point& vtar, point& lookdirgl, point startingPoint = { 0.0f, 0.0f, 0.0f },
+
+	vector <triangle> mn(int framenum, mesh msh, GLfloat ScreenWidth, GLfloat ScreenHeight,
+		point cameradel, point lookdir, point vup, point vtar, point lookdirgl, point startingPoint = { 0.0f, 0.0f, 0.0f },
 		point startingRotation = { 0.0f, 0.0f, 0.0f }, point transformation = { 0.0f, 0.0f, 0.0f }, bool rotation = false) {
 
 		sorted.clear();
@@ -216,9 +231,8 @@ public:
 
 		bool spch = (startingPoint.x != 0.0f || startingPoint.y != 0.0f || startingPoint.z != 0.0f);
 		if (spch && framenum == 0) stp(msh, startingPoint.x, startingPoint.y, startingPoint.z);
-		
-		bool isRotAllowed = startingRotation.x != 0.0f || startingRotation.y != 0.0f || startingRotation.z != 0.0f;
 
+		bool isRotAllowed = startingRotation.x != 0.0f || startingRotation.y != 0.0f || startingRotation.z != 0.0f;
 
 		if (isRotAllowed && framenum == 0) {
 			str(msh, startingRotation.x, startingRotation.y, startingRotation.z);
@@ -226,23 +240,25 @@ public:
 
 		fTheta = 0.05f;
 
-		Camera cm;
-		matView = cm.pointAt(cameradel, lookdir, vup, vtar);
-
-		point rp = { 0,0,1 };
+		Camera cm; matView = cm.pointAt(cameradel, lookdir, vup, vtar);
 
 		normalise(msh, cubeproj, proj, cameradel, matView);
 		cubeproj.triangles.clear();
 
 		/*
 		sort(sorted.begin(), sorted.end(), [](triangle& t1, triangle& t2) {
+
 			GLfloat z1 = (t1.p[0].z + t1.p[1].z + t1.p[2].z) / 3.0f;
 			GLfloat z2 = (t2.p[0].z + t2.p[1].z + t2.p[2].z) / 3.0f;
+
 			return z1 > z2;
-			});
+
+		});
 		*/
 
-		return { msh, sorted };
+		return sorted;
 	}
 
 };
+
+#endif

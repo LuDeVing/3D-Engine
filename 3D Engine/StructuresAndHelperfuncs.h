@@ -1,3 +1,9 @@
+#ifndef STRUCTURESANDHELPERFUNCTIONS_CLASS
+#define STRUCTURESANDHELPERFUNCTIONS_CLASS
+
+#define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
+#define _SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING 
+
 #include <Windows.h>
 #include <GL\glew.h>
 #include <GL\freeglut.h>
@@ -24,11 +30,13 @@ struct point {
 };
 
 struct triangle {
+
 	point p[3];
 	point2D t[3];
 	point normal = { 0, 0, 1 };
 	color color = { 1, 1, 1 };
 	bool visible = false;
+
 };
 
 class Pixel {
@@ -55,9 +63,7 @@ public:
 	unsigned char* imageData;
 	unsigned int width, height;
 
-	DisplayImage() {
-		return;
-	}
+	DisplayImage() = default;
 
 	DisplayImage(unsigned int width, unsigned int height) {
 
@@ -78,6 +84,22 @@ public:
 		imageData[idx + 1] = color.g;
 		imageData[idx + 2] = color.b;
 		imageData[idx + 3] = color.a;
+
+	}
+
+	Pixel getPixel(int x, int y) {
+
+		int idx = (width * y + x) * 4;
+
+		if (idx > this->width * this->height * 4 - 4)
+			return Pixel();
+
+		return Pixel(
+			imageData[idx],
+			imageData[idx + 1],
+			imageData[idx + 2],
+			imageData[idx + 3]
+		);
 
 	}
 
@@ -114,7 +136,7 @@ struct mesh
 					point2D v;
 					s >> junk >> junk >> v.u >> v.v;
 
-					if(ps1SpyroMap) v.v = 1.0f - v.v;
+					if (ps1SpyroMap) v.v = 1.0f - v.v;
 
 					texs.push_back(v);
 				}
@@ -154,7 +176,7 @@ struct mesh
 					}
 
 					tokens[nTokenCount].pop_back();
-					
+
 					triangles.push_back({ verts[stoi(tokens[0]) - 1], verts[stoi(tokens[2]) - 1], verts[stoi(tokens[4]) - 1],
 						texs[stoi(tokens[1]) - 1], texs[stoi(tokens[3]) - 1], texs[stoi(tokens[5]) - 1] });
 
@@ -162,6 +184,7 @@ struct mesh
 
 			}
 		}
+
 		return true;
 	}
 };
@@ -170,6 +193,45 @@ struct mat {
 	GLfloat m[4][4] = { 0 };
 };
 
+GLfloat maxGLfloat(GLfloat a, GLfloat b) {
+
+	if (a < b) {
+		return b;
+	}
+
+	return a;
+
+}
+
+GLfloat minGLfloat(GLfloat a, GLfloat b) {
+
+	if (a > b) {
+		return b;
+	}
+
+	return a;
+
+}
+
+int maxInt(int a, int b) {
+
+	if (a < b) {
+		return b;
+	}
+
+	return a;
+
+}
+
+int minInt(int a, int b) {
+
+	if (a > b) {
+		return b;
+	}
+
+	return a;
+
+}
 
 struct line {
 	ld x1, y1, x2, y2;
@@ -209,7 +271,7 @@ point vecNorm(point& v) {
 	return vecDiv(v, len);
 }
 
-point vecAdd(point& v1, point& v2) {
+point vecAdd(point v1, point v2) {
 	return { v1.x + v2.x, v1.y + v2.y, v1.z + v2.z };
 }
 
@@ -354,3 +416,5 @@ int triangleClipping(point plane_p, point plane_n, triangle& intri, triangle& ou
 		return 2;
 	}
 }
+
+#endif
