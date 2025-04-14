@@ -2,7 +2,7 @@
 
 ![C++](https://img.shields.io/badge/language-C%2B%2B-blue.svg) ![OpenGL](https://img.shields.io/badge/API-OpenGL-green.svg) ![GLUT](https://img.shields.io/badge/Library-GLUT-orange.svg) ![GLEW](https://img.shields.io/badge/Library-GLEW-yellow.svg) ![CImg](https://img.shields.io/badge/Library-CImg-lightgrey.svg)
 
-Welcome to the Legendary 3D Engine! This project is a software-based 3D graphics engine built from the ground up using C++ and leveraging libraries like OpenGL/GLUT/GLEW for windowing and context creation, and CImg for texture loading[cite: 1, 120]. It demonstrates fundamental concepts of 3D graphics rendering, including mesh loading, texturing, camera control, and a custom rasterization pipeline.
+Welcome to the Legendary 3D Engine! This project is a software-based 3D graphics engine built from the ground up using C++ and leveraging libraries like OpenGL/GLUT/GLEW for windowing and context creation, and CImg for texture loading. It demonstrates fundamental concepts of 3D graphics rendering, including mesh loading, texturing, camera control, and a custom rasterization pipeline.
 
 ---
 
