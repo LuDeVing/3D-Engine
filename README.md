@@ -122,7 +122,3 @@ Navigate the rendered 3D environment using the following keyboard controls:
 ---
 
 Enjoy exploring the engine!
-
----
-
-Enjoy exploring the engine!
