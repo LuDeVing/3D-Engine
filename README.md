@@ -8,10 +8,6 @@ Welcome to the Legendary 3D Engine! This project is a software-based 3D graphics
 
 ## 🌟 Showcase
 
-**(Recommended Section)**
-
-This is the perfect place to put your best visuals!
-
 * **Screenshots:**.
 
   ![image](https://github.com/user-attachments/assets/380f20e2-6473-4959-b3d0-ccf10a44c567)
