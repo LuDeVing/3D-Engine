@@ -187,6 +187,64 @@ struct mesh
 
 		return true;
 	}
+
+	void RotatePoint(point& p, char axis, float cosA, float sinA)
+	{
+		float tmp;
+		switch (axis)
+		{
+		case 'X':
+			tmp = p.y;
+			p.y = p.y * cosA - p.z * sinA;
+			p.z = tmp * sinA + p.z * cosA;
+			break;
+		case 'Y':
+			tmp = p.x;
+			p.x = p.x * cosA + p.z * sinA;
+			p.z = -tmp * sinA + p.z * cosA;
+			break;
+		case 'Z':
+			tmp = p.x;
+			p.x = p.x * cosA - p.y * sinA;
+			p.y = tmp * sinA + p.y * cosA;
+			break;
+		default:
+			break;
+		}
+	}
+
+	void RotateMesh(char axis, float angle)
+	{
+		float cosA = cos(angle);
+		float sinA = sin(angle);
+
+		for (auto& tri : triangles)
+		{
+			// Rotate each point of the triangle.
+			RotatePoint(tri.p[0], axis, cosA, sinA);
+			RotatePoint(tri.p[1], axis, cosA, sinA);
+			RotatePoint(tri.p[2], axis, cosA, sinA);
+		}
+	}
+
+	void TranslateMesh(float dx, float dy, float dz)
+	{
+		for (auto& tri : triangles)
+		{
+			tri.p[0].x += dx;
+			tri.p[0].y += dy;
+			tri.p[0].z += dz;
+
+			tri.p[1].x += dx;
+			tri.p[1].y += dy;
+			tri.p[1].z += dz;
+
+			tri.p[2].x += dx;
+			tri.p[2].y += dy;
+			tri.p[2].z += dz;
+		}
+	}
+
 };
 
 struct mat {

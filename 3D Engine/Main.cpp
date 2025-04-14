@@ -78,6 +78,15 @@ point rotateAroundY(point p, GLfloat angle) {
 
 }
 
+point rotateAroundZ(point p, GLfloat angle) {
+	point ans = p;
+
+	ans.x = p.x * cosf(angle) - p.y * sinf(angle);
+	ans.y = p.x * sinf(angle) + p.y * cosf(angle);
+	
+	return ans;
+}
+
 point Matrix_MultiplyVector(mat m, point i) {
 
 	point v;
@@ -221,12 +230,14 @@ void getInputs() {
 		addy -= movementSpeed * deltaTime;
 		deltaAddy = -movementSpeed * deltaTime;
 	}
+	
 	if (GetAsyncKeyState(0x41)) {
 		turn -= turnSpeed * deltaTime;
 	}
 	if (GetAsyncKeyState(0x44)) {
 		turn += turnSpeed * deltaTime;
 	}
+
 	if (GetAsyncKeyState(VK_ADD)) {
 		movementSpeed += 0.5f;
 	}
@@ -254,16 +265,20 @@ void fixRotationAndPosition() {
 
 	point nb = { 0, 0, deltaAddz };
 
-	lookdir = { 0.0f, 0.0f, 1.0f }, vup = { 0.0f, 1.0f, 0.0f };
-	vtar = { 0, 0, 1 }, light_direction = { 0.0f, 1.0f, 0.0f };
+	lookdir = { 0.0f, 0.0f, 1.0f };
+	vup = { 0.0f, 1.0f, 0.0f };
+	vtar = { 0, 0, 1 };
+	light_direction = { 0.0f, 1.0f, 0.0f };
 
 	camera = vecAdd(camera, rotateAroundY(nb, turn));
 	camera.y += deltaAddy;
 
 	lookdir = rotateAroundY(vtar, turn);
+	
 	vtar = vecAdd(lookdir, camera);
 
 	light_direction = rotateAroundY(light_direction, -turn);
+	// light_direction = rotateAroundZ(light_direction, Zturn);
 
 	//std::cout << camera.x << ' ' << camera.z << '\n';
 
@@ -289,8 +304,8 @@ void makeFrame() {
 			displayImage.Draw(j, k, Pixel(8, 36, 90));
 
 
-	vector <triangle> tries = obj.mn(frame, m, screenWidth,
-		screenHeight, camera, lookdir, vup, vtar, lookdir);
+	vector <triangle> tries = obj.mn(frame, m, screenWidth, screenHeight,
+		camera, lookdir, vup, vtar, lookdir);
 
 	drawMesh(tries, screenWidth, screenHeight, true);
 
@@ -357,7 +372,7 @@ int main(int argc, char* argv[]) {
 	cout << "You can push + to speed up, or - to slow down the movement speed.\nf1 is to increase speed by a lot and f2, to slow down a lot.";
 	cout << "\nf3(add) and f4(subtruct) are for sensitivity speed.\nThose are the instructions, start exploring!\n";
 	cout << "Choose map 1, 2 or 3: ";
-cml:cin >> mapNum;
+	cml:cin >> mapNum;
 
 	GLfloat num = 0.0f;
 
@@ -378,6 +393,9 @@ cml:cin >> mapNum;
 		m.LoadFromObjectFile("meshes/Autumn Plains.txt", true, true);
 		textobjs.push_back(true);
 
+		m.RotateMesh('X', -90.0f * (N_PI / 180.0f));
+		m.TranslateMesh(-5468, -2531, 10070);
+
 		string filePath = "textures/Autumn Plains.bmp";
 		texture.load(filePath.c_str());
 
@@ -386,6 +404,9 @@ cml:cin >> mapNum;
 
 		m.LoadFromObjectFile("meshes/summer forest.txt", true, true);
 		textobjs.push_back(true);
+
+		m.RotateMesh('X', -90.0f * (N_PI / 180.0f));
+		m.TranslateMesh(-2576.28, -2515.68, 6204.92);
 
 		string filePath = "textures/summer forest.bmp";
 		texture.load(filePath.c_str());
@@ -410,7 +431,7 @@ cml:cin >> mapNum;
 		}
 	}
 
-	hideConsole();
+	// hideConsole();
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
